@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard – SISTec IoT 2026</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    body { font-family: 'Rajdhani', sans-serif; background-color: #0a0f1e; }
+    .brand, .mono { font-family: 'Orbitron', monospace; }
+    .bg-grid {
+      background-image:
+        linear-gradient(rgba(0,255,200,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,200,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .card-glow { box-shadow: 0 0 0 1px rgba(0,255,200,0.2), 0 0 25px rgba(0,255,200,0.08); }
+    .big-value { font-family: 'Orbitron', monospace; font-size: 3.5rem; font-weight: 900; line-height: 1; }
+    .scan-line { animation: scan 3s linear infinite; }
+    @keyframes scan {
+      0% { transform: translateY(-100%); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(2000%); opacity: 0; }
+    }
+    input:focus { outline: none; box-shadow: 0 0 0 2px rgba(0,255,200,0.5); }
+    .btn-glow { transition: all 0.2s; box-shadow: 0 0 15px rgba(0,255,200,0.3); }
+    .btn-glow:hover { box-shadow: 0 0 30px rgba(0,255,200,0.6); transform: translateY(-1px); }
+    .btn-red { transition: all 0.2s; }
+    .btn-red:hover { background: #ef4444; color: white; }
+    tr:hover td { background-color: rgba(0,255,200,0.04); }
+    .pulse-dot { animation: pulse 2s infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+    }
+  </style>
+</head>
+<body class="bg-grid min-h-screen text-white">
+
+  <!-- Scan line -->
+  <div class="fixed top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-teal-400 to-transparent opacity-20 scan-line pointer-events-none z-50"></div>
+
+  <!-- NAVBAR -->
+  <nav class="bg-gray-900 bg-opacity-90 border-b border-teal-900 px-6 py-4 flex items-center justify-between sticky top-0 z-40">
+    <div class="flex items-center gap-3">
+      <div class="w-2 h-2 rounded-full bg-teal-400 pulse-dot"></div>
+      <span class="brand text-teal-400 text-sm tracking-widest">SISTec IoT 2026</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="text-gray-400 text-sm">Welcome, <span id="username" class="text-teal-300 font-semibold">...</span></span>
+      <a href="/logout" class="text-xs tracking-widest uppercase text-gray-500 hover:text-red-400 border border-gray-700 hover:border-red-400 px-3 py-1.5 rounded-lg transition">Logout</a>
+    </div>
+  </nav>
+
+  <div class="max-w-6xl mx-auto px-4 py-8 space-y-8">
+
+    <!-- SECTION 1: Current Readings -->
+    <div>
+      <p class="text-xs tracking-[0.3em] text-teal-500 uppercase mb-4">Section 1 — Live Sensor Data</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Temperature Card -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-glow">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-2 h-2 rounded-full bg-orange-400 pulse-dot"></div>
+            <span class="text-gray-400 text-xs tracking-widest uppercase">Temperature</span>
+          </div>
+          <div class="big-value text-orange-400" id="temp-value">--</div>
+          <div class="text-orange-300 text-lg mt-1">°C</div>
+          <div class="mt-4 pt-4 border-t border-gray-800 flex gap-4">
+            <span class="text-gray-500 text-xs" id="temp-time">--:-- --</span>
+            <span class="text-gray-600 text-xs">|</span>
+            <span class="text-gray-500 text-xs" id="temp-date">--/--/----</span>
+          </div>
+        </div>
+
+        <!-- Humidity Card -->
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-glow">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-2 h-2 rounded-full bg-blue-400 pulse-dot"></div>
+            <span class="text-gray-400 text-xs tracking-widest uppercase">Humidity</span>
+          </div>
+          <div class="big-value text-blue-400" id="hum-value">--</div>
+          <div class="text-blue-300 text-lg mt-1">%</div>
+          <div class="mt-4 pt-4 border-t border-gray-800 flex gap-4">
+            <span class="text-gray-500 text-xs" id="hum-time">--:-- --</span>
+            <span class="text-gray-600 text-xs">|</span>
+            <span class="text-gray-500 text-xs" id="hum-date">--/--/----</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION 2: LCD Controller -->
+    <div>
+      <p class="text-xs tracking-[0.3em] text-teal-500 uppercase mb-4">Section 2 — LCD Controller</p>
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 card-glow">
+        <p class="text-gray-400 text-sm mb-4">Send text to the 16×2 LCD display <span class="text-gray-600">(max 16 characters)</span></p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <input
+            type="text"
+            id="lcd-input"
+            maxlength="16"
+            placeholder="Enter text for LCD..."
+            class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 text-sm font-mono placeholder-gray-600 transition"
+          />
+          <button onclick="sendLCD()"
+            class="bg-teal-500 hover:bg-teal-400 text-gray-900 font-bold px-6 py-3 rounded-lg text-sm tracking-widest uppercase btn-glow whitespace-nowrap">
+            SEND TO LCD
+          </button>
+        </div>
+        <div class="flex justify-between items-center mt-2">
+          <p id="lcd-status" class="text-xs text-gray-600"></p>
+          <p class="text-xs text-gray-600"><span id="char-count">0</span>/16 chars</p>
+        </div>
+        <!-- LCD Preview -->
+        <div class="mt-4 bg-green-950 border border-green-800 rounded-lg p-4 font-mono">
+          <p class="text-green-400 text-xs tracking-widest mb-1">LCD PREVIEW</p>
+          <div class="text-green-300 text-lg tracking-widest" id="lcd-preview" style="min-height:1.5rem;">________________</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: History Table -->
+    <div>
+      <p class="text-xs tracking-[0.3em] text-teal-500 uppercase mb-4">Section 3 — Sensor History</p>
+      <div class="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden card-glow">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-800 bg-gray-800 bg-opacity-50">
+                <th class="px-4 py-3 text-left text-gray-400 text-xs tracking-widest font-semibold">#</th>
+                <th class="px-4 py-3 text-left text-gray-400 text-xs tracking-widest font-semibold">TEMPERATURE</th>
+                <th class="px-4 py-3 text-left text-gray-400 text-xs tracking-widest font-semibold">HUMIDITY</th>
+                <th class="px-4 py-3 text-left text-gray-400 text-xs tracking-widest font-semibold">TIME</th>
+                <th class="px-4 py-3 text-left text-gray-400 text-xs tracking-widest font-semibold">DATE</th>
+                <th class="px-4 py-3 text-left text-gray-400 text-xs tracking-widest font-semibold">ACTION</th>
+              </tr>
+            </thead>
+            <tbody id="data-table">
+              <tr>
+                <td colspan="6" class="px-4 py-8 text-center text-gray-600">Loading data...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="text-center text-gray-700 text-xs py-6 tracking-widest">SISTec © 2026 · IoT LAB · All Rights Reserved</footer>
+
+  <script>
+    // Load username
+    fetch('/api/me')
+      .then(r => r.json())
+      .then(data => { document.getElementById('username').textContent = data.name; })
+      .catch(() => window.location = '/index.html');
+
+    // Load latest reading
+    function loadLatest() {
+      fetch('/api/latest')
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('temp-value').textContent = data.temperature;
+          document.getElementById('hum-value').textContent = data.humidity;
+          document.getElementById('temp-time').textContent = data.time;
+          document.getElementById('temp-date').textContent = data.date;
+          document.getElementById('hum-time').textContent = data.time;
+          document.getElementById('hum-date').textContent = data.date;
+        });
+    }
+
+    // Load all records
+    function loadTable() {
+      fetch('/api/all')
+        .then(r => r.json())
+        .then(records => {
+          const tbody = document.getElementById('data-table');
+          if (records.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-600">No data yet. Waiting for ESP8266...</td></tr>';
+            return;
+          }
+          tbody.innerHTML = '';
+          // Show newest first
+          const sorted = [...records].reverse();
+          sorted.forEach((r, i) => {
+            const tr = document.createElement('tr');
+            tr.className = 'border-b border-gray-800';
+            tr.id = 'row-' + r.id;
+            tr.innerHTML = `
+              <td class="px-4 py-3 text-gray-500">${i + 1}</td>
+              <td class="px-4 py-3 text-orange-400 font-semibold mono">${r.temperature} °C</td>
+              <td class="px-4 py-3 text-blue-400 font-semibold mono">${r.humidity} %</td>
+              <td class="px-4 py-3 text-gray-300">${r.time}</td>
+              <td class="px-4 py-3 text-gray-300">${r.date}</td>
+              <td class="px-4 py-3">
+                <button onclick="deleteRecord(${r.id})" class="text-xs text-red-500 border border-red-900 px-3 py-1 rounded-lg btn-red tracking-wide">DELETE</button>
+              </td>`;
+            tbody.appendChild(tr);
+          });
+        });
+    }
+
+    // Delete record
+    function deleteRecord(id) {
+      if (!confirm('Delete this record?')) return;
+      fetch('/api/delete/' + id, { method: 'DELETE' })
+        .then(r => r.json())
+        .then(() => { loadTable(); loadLatest(); });
+    }
+
+    // Send LCD text
+    function sendLCD() {
+      const text = document.getElementById('lcd-input').value.trim();
+      if (!text) { alert('Please enter text!'); return; }
+      fetch('/api/lcd-save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          const status = document.getElementById('lcd-status');
+          status.textContent = '✓ Sent to LCD successfully!';
+          status.className = 'text-xs text-teal-400';
+          document.getElementById('lcd-preview').textContent = text.padEnd(16, '_');
+          setTimeout(() => { status.textContent = ''; }, 3000);
+        }
+      });
+    }
+
+    // Char counter + live preview
+    document.getElementById('lcd-input').addEventListener('input', function() {
+      const val = this.value;
+      document.getElementById('char-count').textContent = val.length;
+      document.getElementById('lcd-preview').textContent = val.padEnd(16, '_');
+    });
+
+    // Init
+    loadLatest();
+    loadTable();
+
+    // Auto refresh every 15 seconds
+    setInterval(() => {
+      loadLatest();
+      loadTable();
+    }, 15000);
+  </script>
+</body>
+</html>

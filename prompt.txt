@@ -1,0 +1,90 @@
+Create IoT Web Application
+Details:
+Tech Stack: HTML, Tailwind CSS, Express, NodeJS, Simple DB(JSON) or SQLLite
+Code Level: Beginner
+Don't use Best Practices
+Render Deployabale Ready (Choose DB accordingly)
+Create all the codes in separate block
+
+Templates:
+index.html (Login[Email, Password])
+register.html ([Name, Email, Password])
+
+dashboard.html
+Show Logged-in username on navbar
+Project Title: SISTec IoT Application 2026
+
+Section 1:
+Card1: Show latest saved Temeparature Value in Large Text 
+Card2: Show latest saved Humidity value in Large Text
+(With Date and Time)
+
+Section 2:
+Large Text Box (Max Chars: 16)
+Submit Button
+After submitting save the text in a text file lcd.txt
+(On Every submission overwrite the exisiting saved text)
+
+Section 3:
+Display all saved Temperature and Humdity Records in Tabular Form
+Format:
+# | Temperature | Humidity | Time | Date | Action (Delete)
+1 | 23 'C | 45 % | 10:53 AM | 09-05-2026 | Button(Delete)
+
+TimeZone +5:30 Asia/Kolkata
+Use Server Time & Date
+
+APIs:
+ API 1:
+ Save Temperature & Humidity in Database
+ Called by ESP8266
+ Method: GET or POST
+ Example: https://render-app-url/<>
+
+ Remember ESP8266 doesn't support HTTPS so create code accordingly
+
+ API 2: 
+ Fetch Text from lcd.txt & display on 16x2 LCD
+
+Update the Arduino Code accordingly (Both APIs in Single Code)
+
+HARDWARE PART
+DHT11 is connected to D5
+LCD with I2C is connected to D1 and D2 (SCL & SDA)
+I2C Address: 0x27
+
+LCD Ouptut Example
+
+CONNECTING TO WiFi
+..........
+
+CONNECTED TO WiFi
+-- WELCOME--
+delay(2000)
+
+TEMPERATURE
+25 'C
+
+delay(2000)
+
+HIMIDITY
+56%
+
+Delay(2000)
+
+SISTec DISPLAY
+<Display Fetched Text from API here>
+delay(3000)
+
+SENDING DATA TO
+WEB SERVER....
+
+Send Temperature & Humdity using HTTPS
+
+DATA SENT...!!
+Delay(1000)
+
+NOTE: Render only supports HTTPS so use a library in ESP8266 which can used to send request using HTTPS
+
+Before generating any code
+Understand and this project and summarize for verification
